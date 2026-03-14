@@ -144,12 +144,23 @@ function handleCdc(
 		});
 	}
 
-	// GET /cdc/schedule/all — all schedules combined
+	// GET /cdc/schedule/all — all schedules combined (compact to stay under 30KB staging threshold)
 	if (path === "/cdc/schedule/all") {
+		// Return summary counts + compact entries (without duplicating notes/contraindications)
+		const compact = (entries: typeof childSchedule) =>
+			entries.map(e => ({
+				id: e.id,
+				vaccine: e.vaccine,
+				abbreviation: e.abbreviation,
+				schedule: e.schedule,
+				doseNumber: e.doseNumber,
+				recommendedAge: e.recommendedAge,
+			}));
 		return jsonResponse({
-			child: { total: childSchedule.length, entries: childSchedule },
-			adult: { total: adultSchedule.length, entries: adultSchedule },
-			catchup: { total: catchupSchedule.length, entries: catchupSchedule },
+			child: { total: childSchedule.length, entries: compact(childSchedule) },
+			adult: { total: adultSchedule.length, entries: compact(adultSchedule) },
+			catchup: { total: catchupSchedule.length, entries: compact(catchupSchedule) },
+			_note: "Compact view — use /cdc/schedule/child, /adult, or /catchup for full details with notes and contraindications.",
 		});
 	}
 
@@ -167,12 +178,19 @@ function handleCdc(
 	if (vaccineMatch) {
 		const vaccine = findVaccine(decodeURIComponent(vaccineMatch[1]));
 		if (vaccine) {
-			// Also find all schedule entries for this vaccine
+			// Find schedule entries by both name and abbreviation to handle
+			// cases where schedule uses "HPV" but vaccine.name is "Human Papillomavirus"
+			const searchTerms = [vaccine.name, vaccine.abbreviation].filter(Boolean);
 			const scheduleEntries = [
-				...filterScheduleByVaccine(childSchedule, vaccine.name),
-				...filterScheduleByVaccine(adultSchedule, vaccine.name),
-				...filterScheduleByVaccine(catchupSchedule, vaccine.name),
-			];
+				...childSchedule,
+				...adultSchedule,
+				...catchupSchedule,
+			].filter(e =>
+				searchTerms.some(term =>
+					e.vaccine.toLowerCase().includes(term.toLowerCase()) ||
+					e.abbreviation.toLowerCase().includes(term.toLowerCase())
+				)
+			);
 			return jsonResponse({
 				...vaccine,
 				scheduleEntries,
