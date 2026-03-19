@@ -16,7 +16,6 @@ import {
 	uspstfRecommendations,
 } from "./data/uspstf-recommendations";
 import {
-	getScheduleByType,
 	getAllVaccines,
 	findVaccine,
 	filterScheduleByVaccine,
