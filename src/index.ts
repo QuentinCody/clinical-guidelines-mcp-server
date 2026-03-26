@@ -14,7 +14,7 @@ interface GuidelinesEnv {
 }
 
 export class MyMCP extends McpAgent {
-	server: any = new McpServer({
+	server = new McpServer({
 		name: "clinical-guidelines",
 		version: "0.1.0",
 	});

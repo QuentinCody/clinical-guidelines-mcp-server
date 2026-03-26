@@ -6,7 +6,7 @@ interface SchemaEnv {
 	GUIDELINES_DATA_DO?: unknown;
 }
 
-export function registerGetSchema(server: McpServer, env?: SchemaEnv) {
+export function registerGetSchema(server: McpServer, env?: SchemaEnv): void {
 	const handler = createGetSchemaHandler("GUIDELINES_DATA_DO", "guidelines");
 
 	server.registerTool(

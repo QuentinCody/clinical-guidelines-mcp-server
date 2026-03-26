@@ -6,7 +6,7 @@ interface QueryEnv {
 	GUIDELINES_DATA_DO?: unknown;
 }
 
-export function registerQueryData(server: McpServer, env?: QueryEnv) {
+export function registerQueryData(server: McpServer, env?: QueryEnv): void {
 	const handler = createQueryDataHandler("GUIDELINES_DATA_DO", "guidelines");
 
 	server.registerTool(

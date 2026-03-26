@@ -22,7 +22,7 @@ interface CodeModeEnv {
 export function registerCodeMode(
 	server: McpServer,
 	env: CodeModeEnv,
-) {
+): void {
 	const apiFetch = createGuidelinesApiFetch();
 
 	// Register the search tool (in-process, no isolate)
