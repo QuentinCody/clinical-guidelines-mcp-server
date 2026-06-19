@@ -35,6 +35,8 @@ export function registerCodeMode(
 	// Register the execute tool (V8 isolate via DynamicWorkerExecutor)
 	const executeTool = createExecuteTool({
 		prefix: "guidelines",
+		// Verifiable provenance: guidelines_execute results carry a _meta.citation.
+		source: { id: "guidelines", name: "Clinical Guidelines" },
 		catalog: guidelinesCatalog,
 		apiFetch,
 		doNamespace: env.GUIDELINES_DATA_DO,
