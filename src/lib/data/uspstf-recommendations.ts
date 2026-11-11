@@ -1,9 +1,9 @@
 /**
- * USPSTF A/B Grade Recommendations — embedded static data.
+ * USPSTF recommendation subset — embedded static summaries.
  *
  * Source: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics
- * Last updated: 2026-03. These are the top A and B grade recommendations
- * for preventive services in the general population.
+ * Curated subset; see review-metadata.ts for per-record source review dates.
+ * Provider statements define the applicable populations and exclusions.
  *
  * Grades:
  *   A — Strongly recommended; high certainty of substantial net benefit
@@ -32,12 +32,12 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-breast-cancer-screening",
 		title: "Screening for Breast Cancer",
 		grade: "B",
-		population: "Women aged 40-74 years",
+		population: "Cisgender women and other persons assigned female at birth aged 40-74 within the statement's screening population",
 		ageRange: "40-74",
-		sex: "female",
+		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends biennial screening mammography for women aged 40 to 74 years. For women aged 40-49, the decision to start screening should be an individual one, taking into account patient context and values regarding specific benefits and harms.",
+			"Offer mammography every two years at ages 40-74 (grade B) to cisgender women and other persons assigned female at birth. This includes people with dense breasts or a family history, but excludes high-risk genetic syndromes, young-age high-dose chest radiation, prior breast cancer and high-risk breast lesions. Consult the source for the separate insufficient-evidence statements.",
 		datePublished: "2024-04-30",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening",
 		topic: "Cancer",
@@ -46,12 +46,12 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-cervical-cancer-screening",
 		title: "Screening for Cervical Cancer",
 		grade: "A",
-		population: "Women aged 21-65 years",
+		population: "Asymptomatic individuals with a cervix aged 21-65, excluding the statement's high-risk groups",
 		ageRange: "21-65",
-		sex: "female",
+		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years. For women aged 30 to 65, screening every 3 years with cytology alone, every 5 years with hrHPV testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting).",
+			"For asymptomatic individuals with a cervix, screen at ages 21-29 with cytology every 3 years; at ages 30-65 use cytology every 3 years, hrHPV testing every 5 years, or cotesting every 5 years. This statement excludes prior high-grade cervical precancer or cancer, in utero diethylstilbestrol exposure and immunocompromise. Consult the source for recommendations after cervix removal and outside these ages.",
 		datePublished: "2018-08-21",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening",
 		topic: "Cancer",
@@ -60,12 +60,32 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-colorectal-cancer-screening",
 		title: "Screening for Colorectal Cancer",
 		grade: "A",
-		population: "Adults aged 45-75 years",
-		ageRange: "45-75",
+		population: "Asymptomatic average-risk adults aged 50-75 years",
+		ageRange: "50-75",
 		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends screening for colorectal cancer in all adults aged 45 to 75 years. Several screening strategies are available including stool-based tests (FIT annually, FIT-DNA every 1-3 years), direct visualization (colonoscopy every 10 years, CT colonography every 5 years, flexible sigmoidoscopy every 5 years).",
+			"Screen average-risk adults aged 50 through 75 for colorectal cancer (grade A). Separate records describe grade B screening at ages 45-49 and selective grade C screening at ages 76-85. The source specifies test options, intervals and exclusions from this population.",
+		datePublished: "2021-05-18",
+		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
+		topic: "Cancer",
+	},
+	{
+		id: "uspstf-colorectal-cancer-screening-45-49",
+		title: "Screening for Colorectal Cancer, Ages 45-49",
+		grade: "B", population: "Asymptomatic average-risk adults aged 45-49 years",
+		ageRange: "45-49", sex: "all", riskFactors: [],
+		clinicalSummary: "Offer colorectal cancer screening to average-risk adults aged 45 through 49 (grade B). Consult the source for test options, intervals and population exclusions.",
+		datePublished: "2021-05-18",
+		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
+		topic: "Cancer",
+	},
+	{
+		id: "uspstf-colorectal-cancer-screening-76-85",
+		title: "Selective Screening for Colorectal Cancer, Ages 76-85",
+		grade: "C", population: "Asymptomatic average-risk adults aged 76-85 years",
+		ageRange: "76-85", sex: "all", riskFactors: [],
+		clinicalSummary: "Consider colorectal screening individually at ages 76 through 85 (grade C), accounting for health, earlier screening and preferences. Routine screening of everyone in this age group has a small net benefit.",
 		datePublished: "2021-05-18",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
 		topic: "Cancer",
@@ -74,12 +94,12 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-lung-cancer-screening",
 		title: "Screening for Lung Cancer",
 		grade: "B",
-		population: "Adults aged 50-80 years with 20+ pack-year smoking history",
+		population: "Adults aged 50-80 with at least 20 pack-years who currently smoke or quit within 15 years",
 		ageRange: "50-80",
 		sex: "all",
 		riskFactors: ["20+ pack-year smoking history", "currently smoke or quit within past 15 years"],
 		clinicalSummary:
-			"The USPSTF recommends annual screening for lung cancer with low-dose computed tomography (LDCT) in adults aged 50 to 80 years who have a 20 pack-year smoking history and currently smoke or have quit within the past 15 years. Screening should be discontinued once a person has not smoked for 15 years or develops a health problem that substantially limits life expectancy.",
+			"Offer annual low-dose CT screening at ages 50-80 with at least 20 pack-years and current smoking or quitting within 15 years. Stop after 15 smoke-free years, or when health substantially limits life expectancy or the ability or willingness to undergo curative lung surgery.",
 		datePublished: "2021-03-09",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening",
 		topic: "Cancer",
@@ -88,8 +108,8 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-skin-cancer-prevention-counseling",
 		title: "Behavioral Counseling to Prevent Skin Cancer",
 		grade: "B",
-		population: "Young adults aged 18-24 years with fair skin",
-		ageRange: "18-24",
+		population: "Persons aged 6 months through 24 years with fair skin; counseling includes parents of young children",
+		ageRange: "6 months-24 years",
 		sex: "all",
 		riskFactors: ["fair skin type"],
 		clinicalSummary:
@@ -102,7 +122,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-hypertension-screening",
 		title: "Screening for Hypertension in Adults",
 		grade: "A",
-		population: "Adults aged 18 years or older",
+		population: "Adults aged 18 years or older without known hypertension",
 		ageRange: "18+",
 		sex: "all",
 		riskFactors: [],
@@ -116,15 +136,11 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-statin-use-cvd-prevention",
 		title: "Statin Use for Primary Prevention of CVD in Adults",
 		grade: "B",
-		population: "Adults aged 40-75 years with CVD risk factors and 10-year CVD risk >= 10%",
+		population: "Adults aged 40-75 without known CVD, with at least one CVD risk factor and estimated 10-year risk >= 10%",
 		ageRange: "40-75",
 		sex: "all",
 		riskFactors: [
-			"dyslipidemia",
-			"diabetes",
-			"hypertension",
-			"smoking",
-			"10-year CVD event risk >= 10%",
+			"At least one of dyslipidemia, diabetes, hypertension or smoking AND estimated 10-year CVD event risk >= 10%",
 		],
 		clinicalSummary:
 			"The USPSTF recommends that clinicians prescribe a statin for the primary prevention of cardiovascular disease (CVD) for adults aged 40 to 75 years who have 1 or more CVD risk factors (dyslipidemia, diabetes, hypertension, or smoking) and an estimated 10-year CVD event risk of 10% or greater.",
@@ -150,9 +166,9 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-aspirin-preeclampsia-prevention",
 		title: "Aspirin Use to Prevent Preeclampsia and Related Morbidity and Mortality",
 		grade: "B",
-		population: "Pregnant persons at high risk for preeclampsia",
+		population: "Asymptomatic pregnant persons at high risk for preeclampsia without prior adverse events with low-dose aspirin",
 		ageRange: "all",
-		sex: "female",
+		sex: "all",
 		riskFactors: [
 			"previous preeclampsia",
 			"multifetal gestation",
@@ -171,10 +187,10 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-diabetes-screening",
 		title: "Screening for Prediabetes and Type 2 Diabetes",
 		grade: "B",
-		population: "Adults aged 35-70 years who are overweight or obese",
+		population: "Asymptomatic nonpregnant adults aged 35-70 years with overweight or obesity",
 		ageRange: "35-70",
 		sex: "all",
-		riskFactors: ["overweight (BMI >= 25)", "obese"],
+		riskFactors: ["Overweight or obesity; consider a lower BMI threshold (23) for Asian American persons", "Consider earlier screening with additional risk factors; see the source for populations and thresholds"],
 		clinicalSummary:
 			"The USPSTF recommends screening for prediabetes and type 2 diabetes in adults aged 35 to 70 years who have overweight or obesity. Clinicians should refer patients with prediabetes to effective preventive interventions.",
 		datePublished: "2021-08-24",
@@ -183,14 +199,14 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 	},
 	{
 		id: "uspstf-depression-screening-adults",
-		title: "Screening for Depression and Suicide Risk in Adults",
+		title: "Screening for Depression in Adults",
 		grade: "B",
 		population: "General adult population aged 19 years or older",
 		ageRange: "19+",
 		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends screening for depression in the general adult population, including pregnant and postpartum persons. Screening should be implemented with adequate systems in place to ensure accurate diagnosis, effective treatment, and appropriate follow-up.",
+			"Screen adults aged 19+ for depression, including pregnant, postpartum and older adults (grade B). Positive screens need diagnostic assessment and access to evidence-based care. The separate suicide-risk screening statement is I (insufficient evidence), not grade B.",
 		datePublished: "2023-06-20",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/screening-depression-suicide-risk-adults",
 		topic: "Mental Health",
@@ -199,7 +215,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-anxiety-screening",
 		title: "Screening for Anxiety Disorders in Adults",
 		grade: "B",
-		population: "Adults aged 19-64 years",
+		population: "Adults aged 19-64, including pregnant/postpartum persons, without diagnosed mental health disorders or recognized anxiety symptoms",
 		ageRange: "19-64",
 		sex: "all",
 		riskFactors: [],
@@ -213,18 +229,19 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-hepatitis-b-screening",
 		title: "Screening for Hepatitis B Virus Infection in Adolescents and Adults",
 		grade: "B",
-		population: "Adolescents and adults at increased risk for infection",
-		ageRange: "15+",
+		population: "Asymptomatic nonpregnant adolescents and adults at increased risk for HBV infection",
+		ageRange: "adolescents and adults",
 		sex: "all",
 		riskFactors: [
-			"born in high-prevalence country",
-			"US-born not vaccinated as infant with parents from high-prevalence region",
+			"Born in a country with HBV prevalence >= 2%",
+			"US-born, not vaccinated in infancy, with parents born in regions with HBV prevalence >= 8%",
 			"HIV positive",
 			"injection drug use",
+			"men who have sex with men",
 			"household or sexual contact with HBV-infected person",
 		],
 		clinicalSummary:
-			"The USPSTF recommends screening for hepatitis B virus (HBV) infection in adolescents and adults at increased risk for infection. The USPSTF also recommends screening in pregnant persons at their first prenatal visit.",
+			"Screen asymptomatic nonpregnant adolescents and adults at increased HBV risk, including previously vaccinated persons. This grade B statement does not cover prenatal screening, which has a separate recommendation. Consult the source for risk-group definitions and confirmatory testing.",
 		datePublished: "2020-12-15",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hepatitis-b-virus-infection-screening",
 		topic: "Infectious Disease",
@@ -233,7 +250,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-hepatitis-c-screening",
 		title: "Screening for Hepatitis C Virus Infection in Adolescents and Adults",
 		grade: "B",
-		population: "Adults aged 18-79 years",
+		population: "Asymptomatic adults aged 18-79, including pregnant persons, without known liver disease",
 		ageRange: "18-79",
 		sex: "all",
 		riskFactors: [],
@@ -247,12 +264,12 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-hiv-screening",
 		title: "Screening for HIV Infection",
 		grade: "A",
-		population: "Adolescents and adults aged 15-65 years",
-		ageRange: "15-65",
+		population: "Ages 15-65; younger/older persons at increased risk; all pregnant persons",
+		ageRange: "15-65; risk-based outside range; pregnancy at any age",
 		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends that clinicians screen for HIV infection in adolescents and adults aged 15 to 65 years. Younger adolescents and older adults who are at increased risk should also be screened.",
+			"Screen for HIV at ages 15-65 and outside that range when risk is increased. Also screen all pregnant persons, including those presenting in labor or at delivery with unknown HIV status. These are grade A recommendations; consult the source for rescreening intervals.",
 		datePublished: "2019-06-11",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/human-immunodeficiency-virus-hiv-infection-screening",
 		topic: "Infectious Disease",
@@ -261,10 +278,10 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-sti-counseling",
 		title: "Behavioral Counseling Interventions to Prevent STIs",
 		grade: "B",
-		population: "Sexually active adolescents and adults at increased risk for STIs",
-		ageRange: "15+",
+		population: "All sexually active adolescents; adults at increased risk for STIs",
+		ageRange: "adolescents and adults",
 		sex: "all",
-		riskFactors: ["sexually active", "increased risk for STIs"],
+		riskFactors: ["All sexually active adolescents; adults with increased STI risk (separate population criteria)"],
 		clinicalSummary:
 			"The USPSTF recommends behavioral counseling for all sexually active adolescents and for adults who are at increased risk for sexually transmitted infections (STIs).",
 		datePublished: "2020-08-18",
@@ -277,10 +294,10 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		grade: "A",
 		population: "All persons planning or capable of pregnancy",
 		ageRange: "reproductive age",
-		sex: "female",
+		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends that all persons planning or capable of pregnancy take a daily supplement containing 0.4 to 0.8 mg (400 to 800 mcg) of folic acid to prevent neural tube defects.",
+			"Persons planning or able to become pregnant should take 0.4-0.8 mg (400-800 mcg) folic acid daily, starting at least one month before anticipated conception through the first 2-3 months of pregnancy. This general recommendation excludes prior neural-tube-defect pregnancies and other very-high-risk situations requiring separate advice.",
 		datePublished: "2023-08-01",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/folic-acid-for-the-prevention-of-neural-tube-defects-preventive-medication",
 		topic: "Pregnancy",
@@ -294,7 +311,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		sex: "all",
 		riskFactors: ["tobacco use"],
 		clinicalSummary:
-			"The USPSTF recommends that clinicians ask all adults about tobacco use, advise them to stop using tobacco, and provide behavioral interventions and US Food and Drug Administration (FDA)-approved pharmacotherapy for cessation to nonpregnant adults who use tobacco.",
+			"Ask adults about tobacco use and advise cessation. Offer behavioral support and FDA-approved cessation medication to nonpregnant adults who use tobacco; offer behavioral interventions during pregnancy. Evidence is insufficient for cessation pharmacotherapy in pregnancy and for e-cigarettes as cessation aids. The grade A population-specific advice does not imply approval of those options.",
 		datePublished: "2021-01-19",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/tobacco-use-in-adults-and-pregnant-women-counseling-and-interventions",
 		topic: "Healthy Living",
@@ -308,7 +325,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		sex: "all",
 		riskFactors: ["BMI >= 30"],
 		clinicalSummary:
-			"The USPSTF recommends that clinicians offer or refer adults with a body mass index (BMI) of 30 or higher to intensive, multicomponent behavioral interventions with or without pharmacotherapy to achieve and maintain weight loss.",
+			"Offer or refer adults with BMI at least 30 to intensive, multicomponent behavioral weight-management interventions (grade B). This recommendation is for behavioral interventions; it does not provide a recommendation to prescribe weight-loss medication.",
 		datePublished: "2018-09-18",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/obesity-in-adults-interventions",
 		topic: "Healthy Living",
@@ -318,7 +335,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		title: "Screening for Osteoporosis to Prevent Fractures",
 		grade: "B",
 		population: "Postmenopausal women younger than 65 at increased risk and all women 65+",
-		ageRange: "50+",
+		ageRange: "65+; postmenopausal under 65 when at increased risk",
 		sex: "female",
 		riskFactors: [
 			"postmenopausal",
@@ -328,21 +345,21 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 			"excessive alcohol",
 		],
 		clinicalSummary:
-			"The USPSTF recommends screening for osteoporosis with bone measurement testing to prevent osteoporotic fractures in women 65 years and older and in postmenopausal women younger than 65 years who are at increased risk of osteoporosis, as determined by a formal clinical risk assessment tool.",
-		datePublished: "2018-06-26",
+			"Screen women aged 65+ for osteoporosis to prevent fractures. Also screen postmenopausal women under 65 when clinical risk assessment indicates increased fracture risk. The statement excludes known osteoporosis, fragility fractures and secondary osteoporosis; evidence for screening men remains insufficient.",
+		datePublished: "2025-01-14",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/osteoporosis-screening",
 		topic: "Musculoskeletal",
 	},
 	{
 		id: "uspstf-vision-screening-children",
-		title: "Vision Screening in Children Aged 6 Months to 5 Years",
+		title: "Vision Screening in Children Aged 3 to 5 Years",
 		grade: "B",
 		population: "Children aged 3 to 5 years",
 		ageRange: "3-5",
 		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends vision screening at least once in all children aged 3 to 5 years to detect amblyopia or its risk factors.",
+			"Screen children aged 3-5 at least once for amblyopia or its risk factors (grade B). For children younger than 3, the separate statement finds insufficient evidence (grade I).",
 		datePublished: "2017-09-05",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/vision-in-children-ages-6-months-to-5-years-screening",
 		topic: "Children",
@@ -351,28 +368,28 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		id: "uspstf-gestational-diabetes-screening",
 		title: "Screening for Gestational Diabetes",
 		grade: "B",
-		population: "Asymptomatic pregnant persons at 24 weeks of gestation or after",
+		population: "Asymptomatic pregnant persons at 24+ weeks without previously diagnosed type 1 or type 2 diabetes",
 		ageRange: "all",
-		sex: "female",
+		sex: "all",
 		riskFactors: ["pregnant"],
 		clinicalSummary:
-			"The USPSTF recommends screening for gestational diabetes in asymptomatic pregnant persons at 24 weeks of gestation or after.",
+			"Screen asymptomatic pregnant persons at or after 24 weeks for gestational diabetes (grade B), excluding previously diagnosed type 1 or type 2 diabetes. Evidence for screening before 24 weeks is insufficient (grade I).",
 		datePublished: "2021-08-10",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/gestational-diabetes-screening",
 		topic: "Pregnancy",
 	},
 	{
 		id: "uspstf-preeclampsia-screening",
-		title: "Screening for Preeclampsia",
+		title: "Screening for Hypertensive Disorders of Pregnancy",
 		grade: "B",
-		population: "Pregnant persons",
+		population: "Asymptomatic pregnant persons without known hypertensive disorders or chronic hypertension",
 		ageRange: "all",
-		sex: "female",
+		sex: "all",
 		riskFactors: ["pregnant"],
 		clinicalSummary:
-			"The USPSTF recommends screening for preeclampsia in pregnant persons with blood pressure measurements throughout pregnancy.",
-		datePublished: "2017-04-25",
-		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/preeclampsia-screening",
+			"Check blood pressure at prenatal visits throughout pregnancy to screen for hypertensive disorders (grade B). Repeat elevated measurements to confirm them and arrange evidence-based management when needed. This 2023 statement expands the previous preeclampsia screening scope.",
+		datePublished: "2023-09-19",
+		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hypertensive-disorders-pregnancy-screening",
 		topic: "Pregnancy",
 	},
 	{
@@ -384,7 +401,7 @@ export const uspstfRecommendations: UspstfRecommendation[] = [
 		sex: "all",
 		riskFactors: [],
 		clinicalSummary:
-			"The USPSTF recommends screening by asking questions about unhealthy drug use in adults age 18 years or older. Screening should be implemented when services for accurate diagnosis, effective treatment, and appropriate care can be offered or referred.",
+			"Ask adults aged 18+ about unhealthy drug use when diagnostic assessment, effective treatment and appropriate care are available directly or by referral (grade B). This means question-based screening, not biological specimen testing. Evidence for screening adolescents is insufficient (grade I).",
 		datePublished: "2020-06-09",
 		url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/drug-use-illicit-screening",
 		topic: "Mental Health",
@@ -446,12 +463,15 @@ export function filterUspstfRecommendations(filters?: {
  * Find a specific USPSTF recommendation by ID or topic keyword.
  */
 export function findUspstfRecommendation(idOrTopic: string): UspstfRecommendation | undefined {
-	const lower = idOrTopic.toLowerCase();
-	return (
-		uspstfRecommendations.find((r) => r.id === idOrTopic) ||
-		uspstfRecommendations.find(
-			(r) =>
-				r.title.toLowerCase().includes(lower) || r.id.toLowerCase().includes(lower),
-		)
-	);
+	const matches = matchingUspstfRecommendations(idOrTopic);
+	return matches.length === 1 ? matches[0] : undefined;
+}
+
+/** Exact IDs take precedence; keywords must not silently select a grade/population. */
+export function matchingUspstfRecommendations(idOrTopic: string): UspstfRecommendation[] {
+	const lower = idOrTopic.trim().toLowerCase();
+	if (!lower) return [];
+	const exact = uspstfRecommendations.find((r) => r.id.toLowerCase() === lower);
+	return exact ? [exact] : uspstfRecommendations.filter((r) =>
+		r.title.toLowerCase().includes(lower) || r.id.toLowerCase().includes(lower));
 }

@@ -1,215 +1,21 @@
+import { reviewedContraindications } from "./contraindication-review";
 /**
  * CDC Immunization Schedules — embedded static data.
  *
  * Source: https://www.cdc.gov/vaccines/schedules/
  * Based on ACIP (Advisory Committee on Immunization Practices) recommendations.
- * Last updated: 2026-03.
+ * Partial source review; see review-metadata.ts. Not a complete current schedule.
  *
  * Covers child (birth-18), adult (19+), and catch-up schedules.
  */
 
-export interface VaccineInfo {
-	id: string;
-	name: string;
-	abbreviation: string;
-	diseasePrevented: string[];
-	type: string;
-	manufacturer: string[];
-	description: string;
-}
+import { childHibSchedule } from "./cdc-hib-schedule";
+import { matchingVaccines } from "./vaccine-lookup";
+import type { ImmunizationEntry, VaccineInfo } from "./immunization-types";
+export type { ImmunizationEntry, VaccineInfo } from "./immunization-types";
 
-export interface ImmunizationEntry {
-	id: string;
-	vaccine: string;
-	abbreviation: string;
-	schedule: "child" | "adult" | "catchup";
-	doseNumber: number;
-	recommendedAge: string;
-	minAge: string;
-	minInterval: string;
-	catchupAge: string;
-	notes: string;
-	contraindications: string[];
-}
-
-export const vaccines: VaccineInfo[] = [
-	{
-		id: "hepb",
-		name: "Hepatitis B",
-		abbreviation: "HepB",
-		diseasePrevented: ["Hepatitis B"],
-		type: "Inactivated",
-		manufacturer: ["Merck", "GSK", "Dynavax"],
-		description:
-			"Protects against hepatitis B virus infection that can cause chronic liver disease and liver cancer.",
-	},
-	{
-		id: "rv",
-		name: "Rotavirus",
-		abbreviation: "RV",
-		diseasePrevented: ["Rotavirus gastroenteritis"],
-		type: "Live attenuated",
-		manufacturer: ["Merck (RotaTeq)", "GSK (Rotarix)"],
-		description:
-			"Protects against rotavirus, the most common cause of severe diarrhea in infants and young children.",
-	},
-	{
-		id: "dtap",
-		name: "Diphtheria, Tetanus, Pertussis (DTaP)",
-		abbreviation: "DTaP",
-		diseasePrevented: ["Diphtheria", "Tetanus", "Pertussis"],
-		type: "Inactivated/Toxoid",
-		manufacturer: ["Sanofi Pasteur", "GSK"],
-		description:
-			"Protects against diphtheria, tetanus (lockjaw), and pertussis (whooping cough). Given to children under 7.",
-	},
-	{
-		id: "hib",
-		name: "Haemophilus influenzae type b",
-		abbreviation: "Hib",
-		diseasePrevented: ["Haemophilus influenzae type b disease (meningitis, pneumonia, epiglottitis)"],
-		type: "Conjugate",
-		manufacturer: ["Merck", "Sanofi Pasteur"],
-		description:
-			"Protects against Hib bacteria that can cause meningitis, pneumonia, and other invasive infections in children.",
-	},
-	{
-		id: "ipv",
-		name: "Inactivated Poliovirus",
-		abbreviation: "IPV",
-		diseasePrevented: ["Poliomyelitis"],
-		type: "Inactivated",
-		manufacturer: ["Sanofi Pasteur"],
-		description: "Protects against poliovirus, which can cause paralysis and death.",
-	},
-	{
-		id: "pcv",
-		name: "Pneumococcal Conjugate",
-		abbreviation: "PCV15/PCV20",
-		diseasePrevented: ["Pneumococcal disease (pneumonia, meningitis, bacteremia)"],
-		type: "Conjugate",
-		manufacturer: ["Pfizer (Prevnar 20)", "Merck (Vaxneuvance)"],
-		description:
-			"Protects against Streptococcus pneumoniae bacteria that cause pneumonia, meningitis, and bloodstream infections.",
-	},
-	{
-		id: "mmr",
-		name: "Measles, Mumps, Rubella",
-		abbreviation: "MMR",
-		diseasePrevented: ["Measles", "Mumps", "Rubella"],
-		type: "Live attenuated",
-		manufacturer: ["Merck"],
-		description:
-			"Protects against measles, mumps, and rubella (German measles). Combination live vaccine.",
-	},
-	{
-		id: "var",
-		name: "Varicella",
-		abbreviation: "VAR",
-		diseasePrevented: ["Varicella (chickenpox)"],
-		type: "Live attenuated",
-		manufacturer: ["Merck"],
-		description: "Protects against varicella-zoster virus that causes chickenpox and shingles.",
-	},
-	{
-		id: "hepa",
-		name: "Hepatitis A",
-		abbreviation: "HepA",
-		diseasePrevented: ["Hepatitis A"],
-		type: "Inactivated",
-		manufacturer: ["Merck", "GSK"],
-		description: "Protects against hepatitis A virus infection that affects the liver.",
-	},
-	{
-		id: "tdap",
-		name: "Tetanus, Diphtheria, Pertussis (Tdap)",
-		abbreviation: "Tdap",
-		diseasePrevented: ["Tetanus", "Diphtheria", "Pertussis"],
-		type: "Inactivated/Toxoid",
-		manufacturer: ["Sanofi Pasteur (Adacel)", "GSK (Boostrix)"],
-		description:
-			"Booster vaccine for adolescents and adults against tetanus, diphtheria, and pertussis.",
-	},
-	{
-		id: "hpv",
-		name: "Human Papillomavirus",
-		abbreviation: "HPV",
-		diseasePrevented: ["HPV-related cancers (cervical, oropharyngeal, anal, penile)", "Genital warts"],
-		type: "Recombinant",
-		manufacturer: ["Merck (Gardasil 9)"],
-		description:
-			"Protects against human papillomavirus types that cause cancer and genital warts. 9-valent vaccine.",
-	},
-	{
-		id: "menacwy",
-		name: "Meningococcal ACWY",
-		abbreviation: "MenACWY",
-		diseasePrevented: ["Meningococcal disease (serogroups A, C, W, Y)"],
-		type: "Conjugate",
-		manufacturer: ["Sanofi Pasteur (MenQuadfi)", "Pfizer (Nimenrix)"],
-		description:
-			"Protects against meningococcal bacteria serogroups A, C, W, and Y that cause meningitis and sepsis.",
-	},
-	{
-		id: "menb",
-		name: "Meningococcal B",
-		abbreviation: "MenB",
-		diseasePrevented: ["Meningococcal disease (serogroup B)"],
-		type: "Recombinant",
-		manufacturer: ["Pfizer (Trumenba)", "GSK (Bexsero)"],
-		description: "Protects against meningococcal bacteria serogroup B.",
-	},
-	{
-		id: "flu",
-		name: "Influenza",
-		abbreviation: "IIV/LAIV",
-		diseasePrevented: ["Influenza (flu)"],
-		type: "Inactivated or Live attenuated",
-		manufacturer: ["Multiple"],
-		description:
-			"Annual vaccination against seasonal influenza. Available as inactivated (IIV), recombinant (RIV), or live attenuated (LAIV) formulations.",
-	},
-	{
-		id: "covid",
-		name: "COVID-19",
-		abbreviation: "COVID-19",
-		diseasePrevented: ["COVID-19 (SARS-CoV-2)"],
-		type: "mRNA or Protein subunit",
-		manufacturer: ["Pfizer-BioNTech", "Moderna", "Novavax"],
-		description:
-			"Protects against SARS-CoV-2 virus. Updated formulations released annually to match circulating variants.",
-	},
-	{
-		id: "rsv",
-		name: "Respiratory Syncytial Virus",
-		abbreviation: "RSV",
-		diseasePrevented: ["RSV lower respiratory tract disease"],
-		type: "Recombinant/Protein subunit",
-		manufacturer: ["GSK (Arexvy)", "Pfizer (Abrysvo)"],
-		description:
-			"Protects against respiratory syncytial virus. Recommended for adults 60+ and pregnant persons (32-36 weeks gestation).",
-	},
-	{
-		id: "zoster",
-		name: "Zoster (Shingles)",
-		abbreviation: "RZV",
-		diseasePrevented: ["Herpes zoster (shingles)", "Postherpetic neuralgia"],
-		type: "Recombinant adjuvanted",
-		manufacturer: ["GSK (Shingrix)"],
-		description:
-			"Protects against shingles and postherpetic neuralgia. Two-dose series for adults 50 years and older.",
-	},
-	{
-		id: "ppsv",
-		name: "Pneumococcal Polysaccharide",
-		abbreviation: "PPSV23",
-		diseasePrevented: ["Pneumococcal disease"],
-		type: "Polysaccharide",
-		manufacturer: ["Merck (Pneumovax 23)"],
-		description:
-			"Protects against 23 types of pneumococcal bacteria. Used in adults in combination with PCV15 or as alternative to PCV20.",
-	},
-];
+import { vaccines } from "./cdc-vaccines";
+export { vaccines } from "./cdc-vaccines";
 
 export const childSchedule: ImmunizationEntry[] = [
 	{
@@ -218,12 +24,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		abbreviation: "HepB",
 		schedule: "child",
 		doseNumber: 1,
-		recommendedAge: "Birth",
+		recommendedAge: "Birth; timing depends on maternal HBsAg status, birth weight and medical stability",
 		minAge: "Birth",
 		minInterval: "N/A",
 		catchupAge: "N/A",
-		notes: "Administer monovalent HepB vaccine to all newborns within 24 hours of birth.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Summary of the linked 2025 CDC schedule; verify current guidance. Use monovalent HepB for the birth dose. Maternal HBsAg-negative: medically stable infants weighing at least 2,000 g receive vaccine within 24 hours; below 2,000 g, give it at age 1 month or discharge, whichever comes first. HBsAg-positive: vaccine plus HBIG in separate limbs within 12 hours, at any birth weight. Status unknown: vaccine within 12 hours; add HBIG within 12 hours if below 2,000 g. For infants at least 2,000 g, determine maternal status promptly and, if positive, give HBIG as soon as possible and by age 7 days. Evidence of maternal infection warrants positive-status management. Infants below 2,000 g with positive or unknown maternal status need three additional vaccine doses starting at age 1 month.",
+		contraindications: [...reviewedContraindications["child-hepb-1"]],
 	},
 	{
 		id: "child-hepb-2",
@@ -231,12 +37,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		abbreviation: "HepB",
 		schedule: "child",
 		doseNumber: 2,
-		recommendedAge: "1 month",
+		recommendedAge: "1-2 months",
 		minAge: "4 weeks",
 		minInterval: "4 weeks after dose 1",
 		catchupAge: "N/A",
-		notes: "Minimum interval: 4 weeks after dose 1.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Give dose 2 at least 4 weeks after dose 1. Before age 6 weeks, use monovalent HepB. Maternal HBsAg status and low birth weight affect the series; see the birth-dose summary and linked CDC guidance.",
+		contraindications: [...reviewedContraindications["child-hepb-2"]],
 	},
 	{
 		id: "child-hepb-3",
@@ -249,8 +55,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "8 weeks after dose 2 and 16 weeks after dose 1",
 		catchupAge: "N/A",
 		notes:
-			"Final dose should not be administered before age 24 weeks. Minimum interval from dose 2: 8 weeks; from dose 1: 16 weeks.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"The final dose must be at age 24 weeks or later, at least 8 weeks after dose 2 and 16 weeks after dose 1. Four doses are permitted when a HepB combination vaccine follows the birth dose; apply these final-dose requirements to dose 4. For infants whose mother is HBsAg-positive or whose status remains unknown, the linked CDC schedule specifies the final dose at age 6 months, with a minimum age of 24 weeks.",
+		contraindications: [...reviewedContraindications["child-hepb-3"]],
 	},
 	{
 		id: "child-rv-1",
@@ -263,12 +69,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "N/A",
 		catchupAge: "Before 15 weeks 0 days",
 		notes:
-			"Maximum age for first dose is 14 weeks 6 days. RotaTeq (RV5) 3-dose series; Rotarix (RV1) 2-dose series.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"SCID",
-			"History of intussusception",
-		],
+			"Start no later than age 14 weeks 6 days. A series of Rotarix (RV1) uses two doses; if any dose is RotaTeq (RV5) or its brand is unknown, use three doses. Keep at least 4 weeks between doses and finish by age 8 months 0 days.",
+		contraindications: [...reviewedContraindications["child-rv-1"]],
 	},
 	{
 		id: "child-rv-2",
@@ -279,13 +81,9 @@ export const childSchedule: ImmunizationEntry[] = [
 		recommendedAge: "4 months",
 		minAge: "10 weeks",
 		minInterval: "4 weeks after dose 1",
-		catchupAge: "Before 8 months 0 days",
+		catchupAge: "By 8 months 0 days",
 		notes: "Maximum age for any dose is 8 months 0 days.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"SCID",
-			"History of intussusception",
-		],
+		contraindications: [...reviewedContraindications["child-rv-2"]],
 	},
 	{
 		id: "child-rv-3",
@@ -296,13 +94,9 @@ export const childSchedule: ImmunizationEntry[] = [
 		recommendedAge: "6 months",
 		minAge: "14 weeks",
 		minInterval: "4 weeks after dose 2",
-		catchupAge: "Before 8 months 0 days",
-		notes: "Only needed for RotaTeq (RV5) 3-dose series; not needed for Rotarix (RV1) 2-dose series.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"SCID",
-			"History of intussusception",
-		],
+		catchupAge: "By 8 months 0 days",
+		notes: "Give dose 3 if any prior dose was RotaTeq (RV5) or its brand is unknown. A completed two-dose Rotarix (RV1) series does not need dose 3. Allow at least 4 weeks after dose 2 and finish by age 8 months 0 days.",
+		contraindications: [...reviewedContraindications["child-rv-3"]],
 	},
 	{
 		id: "child-dtap-1",
@@ -314,11 +108,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "6 weeks",
 		minInterval: "N/A",
 		catchupAge: "N/A",
-		notes: "Five-dose series. Can be given as combination vaccine (e.g., Pediarix, Vaxelis).",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+		notes: "Five-dose DTaP series. Pediarix and Vaxelis are examples of combination products for the three-dose primary series, not all five doses. Select an age-appropriate product for each dose.",
+		contraindications: [...reviewedContraindications["child-dtap-1"]],
 	},
 	{
 		id: "child-dtap-2",
@@ -331,10 +122,7 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "4 weeks after dose 1",
 		catchupAge: "N/A",
 		notes: "Minimum interval: 4 weeks.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+		contraindications: [...reviewedContraindications["child-dtap-2"]],
 	},
 	{
 		id: "child-dtap-3",
@@ -347,10 +135,7 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "4 weeks after dose 2",
 		catchupAge: "N/A",
 		notes: "Minimum interval: 4 weeks.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+		contraindications: [...reviewedContraindications["child-dtap-3"]],
 	},
 	{
 		id: "child-dtap-4",
@@ -362,11 +147,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "12 months",
 		minInterval: "6 months after dose 3",
 		catchupAge: "N/A",
-		notes: "Fourth dose may be given as early as 12 months if 6 months since third dose.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+		notes: "When planning dose 4, use age 12 months or later and at least 6 months after dose 3. An inadvertently early fourth dose may count retrospectively if given at age 12 months or later and at least 4 months after dose 3; this exception does not shorten the planned interval.",
+		contraindications: [...reviewedContraindications["child-dtap-4"]],
 	},
 	{
 		id: "child-dtap-5",
@@ -379,50 +161,9 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "6 months after dose 4",
 		catchupAge: "N/A",
 		notes: "Not needed if fourth dose was administered at age 4 years or older and at least 6 months after third dose.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+		contraindications: [...reviewedContraindications["child-dtap-5"]],
 	},
-	{
-		id: "child-hib-1",
-		vaccine: "Hib",
-		abbreviation: "Hib",
-		schedule: "child",
-		doseNumber: 1,
-		recommendedAge: "2 months",
-		minAge: "6 weeks",
-		minInterval: "N/A",
-		catchupAge: "N/A",
-		notes: "3 or 4 dose series depending on product. PRP-OMP (PedvaxHIB): 2-dose primary series.",
-		contraindications: ["Severe allergic reaction to a vaccine component", "Age younger than 6 weeks"],
-	},
-	{
-		id: "child-hib-2",
-		vaccine: "Hib",
-		abbreviation: "Hib",
-		schedule: "child",
-		doseNumber: 2,
-		recommendedAge: "4 months",
-		minAge: "10 weeks",
-		minInterval: "4 weeks after dose 1",
-		catchupAge: "N/A",
-		notes: "If PRP-OMP used at 2 and 4 months, dose at 6 months is not indicated.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
-	},
-	{
-		id: "child-hib-3",
-		vaccine: "Hib",
-		abbreviation: "Hib",
-		schedule: "child",
-		doseNumber: 3,
-		recommendedAge: "12-15 months",
-		minAge: "12 months",
-		minInterval: "8 weeks after dose 2",
-		catchupAge: "N/A",
-		notes: "Booster dose at 12-15 months regardless of Hib product used for primary series.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
-	},
+	...childHibSchedule,
 	{
 		id: "child-ipv-1",
 		vaccine: "Inactivated Poliovirus",
@@ -433,8 +174,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "6 weeks",
 		minInterval: "N/A",
 		catchupAge: "N/A",
-		notes: "Four-dose series.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Four-dose routine series. In the first 6 months of life, use minimum ages and intervals only for travel to a polio-endemic region or during an outbreak.",
+		contraindications: [...reviewedContraindications["child-ipv-1"]],
 	},
 	{
 		id: "child-ipv-2",
@@ -446,8 +187,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "10 weeks",
 		minInterval: "4 weeks after dose 1",
 		catchupAge: "N/A",
-		notes: "Minimum interval: 4 weeks.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Minimum interval: 4 weeks. In the first 6 months of life, use minimum ages and intervals only for travel to a polio-endemic region or during an outbreak.",
+		contraindications: [...reviewedContraindications["child-ipv-2"]],
 	},
 	{
 		id: "child-ipv-3",
@@ -457,10 +198,10 @@ export const childSchedule: ImmunizationEntry[] = [
 		doseNumber: 3,
 		recommendedAge: "6-18 months",
 		minAge: "14 weeks",
-		minInterval: "4 weeks after dose 2",
+		minInterval: "4 weeks after dose 2 under age 4; 6 months as the final dose at age 4 or older",
 		catchupAge: "N/A",
-		notes: "Minimum interval: 4 weeks. If both OPV and IPV were given as part of series, total of 4 doses should be given regardless.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "A fourth dose is unnecessary when dose 3 is at age 4 or older and at least 6 months after dose 2. Mixed IPV/OPV series follow the same age and interval requirements; only trivalent OPV (tOPV) counts. CDC's polio guidance requires written documentation specifying tOPV for OPV given after April 1, 2016. Bivalent OPV does not cover type 2. In the first 6 months, minimum ages and intervals are for travel to a polio-endemic region or an outbreak. Review foreign-dose documentation and fractional IPV separately.",
+		contraindications: [...reviewedContraindications["child-ipv-3"]],
 	},
 	{
 		id: "child-ipv-4",
@@ -473,12 +214,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "6 months after dose 3",
 		catchupAge: "N/A",
 		notes: "Final dose on or after 4th birthday and at least 6 months after previous dose.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		contraindications: [...reviewedContraindications["child-ipv-4"]],
 	},
 	{
 		id: "child-pcv-1",
 		vaccine: "Pneumococcal Conjugate",
-		abbreviation: "PCV15",
+		abbreviation: "PCV15/PCV20",
 		schedule: "child",
 		doseNumber: 1,
 		recommendedAge: "2 months",
@@ -486,12 +227,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "N/A",
 		catchupAge: "N/A",
 		notes: "Four-dose series with PCV15 or PCV20.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		contraindications: [...reviewedContraindications["child-pcv-1"]],
 	},
 	{
 		id: "child-pcv-2",
 		vaccine: "Pneumococcal Conjugate",
-		abbreviation: "PCV15",
+		abbreviation: "PCV15/PCV20",
 		schedule: "child",
 		doseNumber: 2,
 		recommendedAge: "4 months",
@@ -499,12 +240,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "4 weeks after dose 1",
 		catchupAge: "N/A",
 		notes: "Minimum interval: 4 weeks.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		contraindications: [...reviewedContraindications["child-pcv-2"]],
 	},
 	{
 		id: "child-pcv-3",
 		vaccine: "Pneumococcal Conjugate",
-		abbreviation: "PCV15",
+		abbreviation: "PCV15/PCV20",
 		schedule: "child",
 		doseNumber: 3,
 		recommendedAge: "6 months",
@@ -512,12 +253,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "4 weeks after dose 2",
 		catchupAge: "N/A",
 		notes: "Minimum interval: 4 weeks.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		contraindications: [...reviewedContraindications["child-pcv-3"]],
 	},
 	{
 		id: "child-pcv-4",
 		vaccine: "Pneumococcal Conjugate",
-		abbreviation: "PCV15",
+		abbreviation: "PCV15/PCV20",
 		schedule: "child",
 		doseNumber: 4,
 		recommendedAge: "12-15 months",
@@ -525,7 +266,7 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "8 weeks after dose 3",
 		catchupAge: "N/A",
 		notes: "Booster dose at 12-15 months.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		contraindications: [...reviewedContraindications["child-pcv-4"]],
 	},
 	{
 		id: "child-mmr-1",
@@ -537,12 +278,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "12 months",
 		minInterval: "N/A",
 		catchupAge: "N/A",
-		notes: "Two-dose series. Can be given as MMRV (ProQuad) which includes varicella.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+		notes: "Two-dose series. For the first dose at ages 12-47 months, the linked CDC schedule prefers separate MMR and varicella vaccines; MMRV may be used when parents or caregivers prefer it. MMRV is limited to ages 12 months through 12 years.",
+		contraindications: [...reviewedContraindications["child-mmr-1"]],
 	},
 	{
 		id: "child-mmr-2",
@@ -551,15 +288,11 @@ export const childSchedule: ImmunizationEntry[] = [
 		schedule: "child",
 		doseNumber: 2,
 		recommendedAge: "4-6 years",
-		minAge: "13 months",
-		minInterval: "4 weeks after dose 1",
+		minAge: "At least 4 weeks after a valid first MMR dose given at age 12 months or later",
+		minInterval: "MMR: 4 weeks after dose 1; MMRV: 3 months between doses",
 		catchupAge: "N/A",
-		notes: "Second dose can be given earlier if at least 4 weeks after first dose.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+		notes: "The second MMR dose may precede age 4 years if at least 4 weeks after the first valid dose. For MMRV, plan at least 3 months between doses; its maximum age is 12 years. A measles-containing dose before age 12 months for travel does not replace the routine two-dose series.",
+		contraindications: [...reviewedContraindications["child-mmr-2"]],
 	},
 	{
 		id: "child-var-1",
@@ -571,12 +304,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "12 months",
 		minInterval: "N/A",
 		catchupAge: "N/A",
-		notes: "Two-dose series. Do not administer to persons with documented varicella disease history.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+		notes: "Vaccinate people without evidence of immunity. A healthcare provider should verify reported varicella history using an epidemiologic link to a typical or laboratory-confirmed case, or laboratory confirmation at the time of illness. Verified disease does not require vaccination; an unverified history alone does not establish immunity. Other evidence includes age-appropriate vaccination or laboratory evidence of immunity.",
+		contraindications: [...reviewedContraindications["child-var-1"]],
 	},
 	{
 		id: "child-var-2",
@@ -585,15 +314,11 @@ export const childSchedule: ImmunizationEntry[] = [
 		schedule: "child",
 		doseNumber: 2,
 		recommendedAge: "4-6 years",
-		minAge: "15 months",
-		minInterval: "3 months after dose 1",
+		minAge: "15 months when planning dose 2; retrospective acceptance of an early dose is addressed in notes",
+		minInterval: "Under age 13: 3 months after dose 1; age 13 or older: 4 weeks",
 		catchupAge: "N/A",
-		notes: "If age 13 or older, minimum interval is 4 weeks.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+		notes: "Under age 13, plan dose 2 at least 3 months after dose 1; an inadvertently early dose at least 4 weeks later may count. At age 13 or older, use single-antigen varicella vaccine with a routine 4-8 week interval and a 4-week minimum; MMRV is not approved for that age group.",
+		contraindications: [...reviewedContraindications["child-var-2"]],
 	},
 	{
 		id: "child-hepa-1",
@@ -605,8 +330,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "12 months",
 		minInterval: "N/A",
 		catchupAge: "2-18 years if not vaccinated",
-		notes: "Two-dose series, 6 months apart.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Start the routine two-dose series at age 12-23 months, with at least 6 months between doses. A travel dose at age 6-11 months does not replace the two-dose series starting at age 12 months or later.",
+		contraindications: [...reviewedContraindications["child-hepa-1"]],
 	},
 	{
 		id: "child-hepa-2",
@@ -614,12 +339,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		abbreviation: "HepA",
 		schedule: "child",
 		doseNumber: 2,
-		recommendedAge: "18-23 months",
+		recommendedAge: "At least 6 months after dose 1",
 		minAge: "18 months",
 		minInterval: "6 months after dose 1",
 		catchupAge: "2-18 years if not vaccinated",
-		notes: "Minimum interval 6 months after dose 1.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Give dose 2 at least 6 months after a first dose given at age 12 months or later. Completion may be after age 23 months depending on when dose 1 was given. A delayed series does not need to be restarted.",
+		contraindications: [...reviewedContraindications["child-hepa-2"]],
 	},
 	{
 		id: "child-tdap-1",
@@ -628,14 +353,11 @@ export const childSchedule: ImmunizationEntry[] = [
 		schedule: "child",
 		doseNumber: 1,
 		recommendedAge: "11-12 years",
-		minAge: "10 years",
-		minInterval: "N/A",
+		minAge: "11 years routine; 7 years for catch-up",
+		minInterval: "Adolescent Tdap booster: regardless of interval since prior Td/DTaP; catch-up primary-series intervals are separate",
 		catchupAge: "13-18 years if not previously vaccinated",
-		notes: "Single dose of Tdap. Then Td or Tdap booster every 10 years.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose of DTP/DTaP/Tdap",
-		],
+		notes: "Routine Tdap booster at age 11-12 years, followed by Td or Tdap every 10 years after a complete primary series. Give Tdap during each pregnancy, preferably early in gestational weeks 27-36. A catch-up Tdap dose at age 7-9 still requires the adolescent booster; a dose at age 10 does not. Wound management and incomplete primary series have separate timing.",
+		contraindications: [...reviewedContraindications["child-tdap-1"]],
 	},
 	{
 		id: "child-hpv-1",
@@ -648,8 +370,8 @@ export const childSchedule: ImmunizationEntry[] = [
 		minInterval: "N/A",
 		catchupAge: "Through age 26 years",
 		notes:
-			"If series started before 15th birthday: 2-dose series (0, 6-12 months). If started at 15 or older: 3-dose series (0, 1-2, 6 months).",
-		contraindications: ["Severe allergic reaction to a vaccine component", "Pregnancy"],
+			"Starting before age 15 generally requires two doses 6-12 months apart, with a 5-month minimum. Starting at 15+ or immunocompromise requires three doses at 0, 1-2 and 6 months. Defer vaccination until after pregnancy.",
+		contraindications: ["Severe allergy to a prior HPV dose or component", "Immediate hypersensitivity to yeast"],
 	},
 	{
 		id: "child-menacwy-1",
@@ -658,11 +380,11 @@ export const childSchedule: ImmunizationEntry[] = [
 		schedule: "child",
 		doseNumber: 1,
 		recommendedAge: "11-12 years",
-		minAge: "2 months (for high risk); 11 years (routine)",
+		minAge: "2025 schedule: Menveo lyophilized from 2 months for indicated risk; Menveo liquid from 10 years; MenQuadfi from 2 years; routine adolescent vaccination at 11-12 years",
 		minInterval: "N/A",
 		catchupAge: "13-18 years if not previously vaccinated",
-		notes: "Two-dose series for adolescents. First dose at 11-12 years, booster at 16 years.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Routine adolescent dose at 11-12 years and booster at 16 years. Younger children with specified risk conditions follow product-, age- and history-specific primary and booster schedules; the routine adolescent rows do not describe those series. Product ages here describe the linked 2025 schedule, not an independently verified current label.",
+		contraindications: [...reviewedContraindications["child-menacwy-1"]],
 	},
 	{
 		id: "child-menacwy-2",
@@ -674,24 +396,24 @@ export const childSchedule: ImmunizationEntry[] = [
 		minAge: "16 years",
 		minInterval: "8 weeks after dose 1",
 		catchupAge: "16-18 years",
-		notes: "Booster dose at age 16 years. If first dose given at age 16 or older, booster not needed.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "For routine adolescent vaccination, give a booster at age 16; if dose 1 was at age 13-15, give the booster at age 16-18 and at least 8 weeks later. A first dose at age 16 or older does not need a routine booster in otherwise healthy adolescents. Ongoing increased risk or an outbreak can require additional boosters; consult the risk-specific MenACWY schedule.",
+		contraindications: [...reviewedContraindications["child-menacwy-2"]],
 	},
 	{
 		id: "child-flu-annual",
 		vaccine: "Influenza",
-		abbreviation: "IIV/LAIV",
+		abbreviation: "IIV/LAIV/RIV",
 		schedule: "child",
 		doseNumber: 1,
 		recommendedAge: "6 months and older, annually",
-		minAge: "6 months",
-		minInterval: "Annual",
+		minAge: "IIV: 6 months; LAIV: 2 years; RIV: 9 years; product and health restrictions also apply",
+		minInterval: "Seasonal; at least 4 weeks between doses when two are needed",
 		catchupAge: "N/A",
 		notes:
-			"Annual vaccination. Children 6 months through 8 years receiving flu vaccine for the first time need 2 doses at least 4 weeks apart.",
+			"For 2026-2027, children aged 6 months-8 years need two doses unless at least two prior flu doses, spaced at least 4 weeks apart, were received before July 1 preceding the season. Unknown history also requires two doses; finish both even if the child turns 9. Otherwise give one seasonal dose. Use an age-appropriate product: IIV from 6 months, LAIV from 2 years, RIV from 9 years. Consult product-specific precautions; egg allergy alone does not exclude vaccination.",
 		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"LAIV: age younger than 2 years, immunocompromised, pregnant, aspirin therapy",
+			"Severe allergy to a non-egg component of the selected product; prior influenza-vaccine reactions require CDC's product-specific assessment",
+			"LAIV: pregnancy, immunocompromise, aspirin or salicylate therapy in children/adolescents, or asthma/wheezing in the preceding 12 months at ages 2-4; other exclusions also apply",
 		],
 	},
 	{
@@ -700,12 +422,12 @@ export const childSchedule: ImmunizationEntry[] = [
 		abbreviation: "COVID-19",
 		schedule: "child",
 		doseNumber: 1,
-		recommendedAge: "6 months and older",
+		recommendedAge: "From 6 months; recommendation depends on age and immune status; see notes for shared clinical decision-making",
 		minAge: "6 months",
-		minInterval: "Annual updated dose",
+		minInterval: "Product-, age-, history- and immune-status-dependent; see current CDC guidance",
 		catchupAge: "N/A",
-		notes: "Annual updated COVID-19 vaccine. Number of doses depends on age and vaccination history.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "CDC's September 23, 2026 guidance uses shared clinical decision-making for 2026-2027 vaccination at ages 6 months-17 years without moderate or severe immunocompromise. Vaccination is recommended with moderate or severe immunocompromise using separate guidance; age 18 follows adult recommendations. Dose counts and intervals depend on product, age and history. FDA indication and off-label qualifications apply; this summary is not a dosing algorithm.",
+		contraindications: ["Severe allergic reaction after a previous dose or to a component contraindicates the same COVID-19 vaccine type; an alternative type may be used after assessment. mRNA vaccines are one type and protein-subunit vaccine is another. Precautions require separate review."],
 	},
 ];
 
@@ -717,14 +439,14 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19 years and older, annually",
-		minAge: "19 years",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
 		minInterval: "Annual",
 		catchupAge: "N/A",
 		notes:
-			"Annual vaccination. Adults 65+ should preferentially receive high-dose, adjuvanted, or recombinant flu vaccine.",
+			"One age- and health-appropriate dose each season. Adults 65+ preferentially receive high-dose, adjuvanted, or recombinant vaccine; use another age-appropriate product if those are unavailable. LAIV is limited to eligible people aged 2-49, so only ages 19-49 within this adult summary. Egg allergy alone does not preclude vaccination; reactions to previous influenza vaccines need product-specific assessment. Pregnancy permits IIV or RIV, not LAIV. Consult CDC's seasonal guidance for other exclusions and special situations.",
 		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"LAIV contraindicated in immunocompromised, pregnant persons",
+			"Severe allergy to a non-egg component of the selected product; prior vaccine reactions require CDC's product-specific assessment",
+			"LAIV: pregnancy or immunocompromise; other LAIV exclusions also apply",
 		],
 	},
 	{
@@ -734,11 +456,11 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19 years and older",
-		minAge: "19 years",
-		minInterval: "Annual updated dose",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "Product-, age-, history- and immune-status-dependent; see current CDC guidance",
 		catchupAge: "N/A",
-		notes: "Annual updated COVID-19 vaccine recommended for all adults.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "CDC's September 23, 2026 guidance recommends 2026-2027 vaccination for adults. Without immunocompromise: ages 19-64 receive one seasonal dose; ages 65+ receive two, generally 6 months apart. Product-specific minimum intervals and FDA indication/off-label qualifications apply. Immunocompromised people follow separate guidance. This row is a summary, not a dosing algorithm; consult the linked current tables.",
+		contraindications: ["Severe allergic reaction after a previous dose or to a component contraindicates the same COVID-19 vaccine type; an alternative type may be used after assessment. mRNA vaccines are one type and protein-subunit vaccine is another. Precautions require separate review."],
 	},
 	{
 		id: "adult-tdap-1",
@@ -747,15 +469,12 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19+ years",
-		minAge: "19 years",
-		minInterval: "1 dose Tdap then Td/Tdap every 10 years",
-		catchupAge: "If not previously vaccinated with Tdap",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "Completed primary series: Td/Tdap every 10 years; incomplete series requires dose-specific intervals",
+		catchupAge: "Unknown or incomplete primary series, or no Tdap at age 10 or older",
 		notes:
-			"1 dose Tdap if not previously received, then Td or Tdap booster every 10 years. Pregnant persons: 1 dose Tdap during each pregnancy (27-36 weeks gestation).",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+			"Complete a three-dose primary series when unvaccinated or incompletely vaccinated: Tdap preferably first, Td/Tdap at least 4 weeks later, then Td/Tdap 6-12 months later. After a complete series, give Tdap if none was received at age 10 or older, then Td/Tdap every 10 years. Each pregnancy requires Tdap, preferably early in weeks 27-36. Wound management has separate timing; consult CDC rather than applying the routine booster interval.",
+		contraindications: [...reviewedContraindications["adult-tdap-1"]],
 	},
 	{
 		id: "adult-mmr-1",
@@ -764,16 +483,12 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19+ years if no evidence of immunity",
-		minAge: "19 years",
-		minInterval: "N/A",
-		catchupAge: "Born in 1957 or later without evidence of immunity",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "At least 4 weeks when a second dose is indicated",
+		catchupAge: "Without evidence of immunity; birth before 1957 has exceptions, including health care personnel",
 		notes:
-			"1 or 2 doses depending on indication. Health care personnel and students: 2 doses. International travel: 2 doses.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+			"Without evidence of immunity: usually one dose; two may be needed for postsecondary students, international travelers, close contacts of immunocompromised people, and health care personnel. Prior doses and birth year affect eligibility; consult CDC's immunity criteria and special situations.",
+		contraindications: [...reviewedContraindications["adult-mmr-1"]],
 	},
 	{
 		id: "adult-var-1",
@@ -782,16 +497,12 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19+ years if no evidence of immunity",
-		minAge: "19 years",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
 		minInterval: "4 weeks between doses",
 		catchupAge: "If no evidence of immunity",
 		notes:
-			"2-dose series, 4-8 weeks apart, for adults without evidence of immunity (no documented history of varicella or vaccination).",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+			"Without evidence of immunity: two doses 4-8 weeks apart, or one remaining dose after a prior dose. Evidence may include documented vaccination, laboratory findings, clinician-verified disease or eligible birth-year history. Pregnancy, health care work and HIV require specific CDC criteria; do not infer immunity solely from recalled history.",
+		contraindications: [...reviewedContraindications["adult-var-1"]],
 	},
 	{
 		id: "adult-zoster-1",
@@ -799,15 +510,14 @@ export const adultSchedule: ImmunizationEntry[] = [
 		abbreviation: "RZV",
 		schedule: "adult",
 		doseNumber: 1,
-		recommendedAge: "50 years and older",
+		recommendedAge: "50 years and older; immunocompromised adults 19 years and older",
 		minAge: "50 years (19 years if immunocompromised)",
-		minInterval: "2-6 months between dose 1 and dose 2",
+		minInterval: "4 weeks minimum; usually 2-6 months between doses",
 		catchupAge: "N/A",
 		notes:
-			"2-dose series. Recommended regardless of past shingles episode or prior Zostavax vaccination. Also recommended for immunocompromised adults 19+.",
+			"Two doses even after previous shingles or Zostavax. Some immunocompromised adults benefit from a shorter 1-2 month interval. Defer during an acute shingles episode until symptoms resolve; consider postponing during pregnancy. Shingrix does not prevent primary varicella.",
 		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Currently has shingles",
+			"Severe allergic reaction after a prior dose or to a vaccine component",
 		],
 	},
 	{
@@ -817,26 +527,26 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "Through age 26 years",
-		minAge: "19 years",
-		minInterval: "See notes",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "2-dose minimum: 5 months; 3-dose minimums: 4 weeks from 1 to 2, 12 weeks from 2 to 3, and 5 months from 1 to 3",
 		catchupAge: "27-45 years based on shared clinical decision-making",
 		notes:
-			"2- or 3-dose series depending on age at initial vaccination. Ages 27-45: shared clinical decision-making. Not recommended for everyone older than 26.",
-		contraindications: ["Severe allergic reaction to a vaccine component", "Pregnancy"],
+			"Complete two or three doses based on starting age, prior intervals and immune status; immunocompromised people need three doses. Ages 27-45: shared clinical decision-making. Delay remaining doses until after pregnancy; pregnancy testing and intervention after inadvertent vaccination are not required. Consult CDC for dose intervals.",
+		contraindications: ["Severe allergic reaction after a prior dose or to a vaccine component; immediate yeast hypersensitivity for Gardasil 9"],
 	},
 	{
 		id: "adult-pneumo-1",
 		vaccine: "Pneumococcal",
-		abbreviation: "PCV20 or PCV15+PPSV23",
+		abbreviation: "PCV20 or PCV21 or PCV15+PPSV23",
 		schedule: "adult",
 		doseNumber: 1,
-		recommendedAge: "65 years and older, or 19-64 with risk conditions",
+		recommendedAge: "50 years and older; ages 19-49 with specified risk conditions",
 		minAge: "19 years (with risk conditions)",
-		minInterval: "PCV15 followed by PPSV23 at least 1 year later",
+		minInterval: "When PPSV23 is indicated after PCV15: usually at least 1 year; an 8-week minimum may apply with immunocompromise, CSF leak or cochlear implant",
 		catchupAge: "N/A",
 		notes:
-			"Adults 65+: 1 dose PCV20, or 1 dose PCV15 followed by PPSV23. Adults 19-64 with certain medical conditions or risk factors also indicated.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"For eligible adults with no prior conjugate vaccine or unknown history: PCV20 or PCV21 alone, or PCV15 followed by PPSV23 after at least 1 year (8 weeks may apply for specified high-risk conditions). Prior vaccine history changes the schedule; consult the full CDC notes. No additional dose follows PCV20 or PCV21.",
+		contraindications: [...reviewedContraindications["adult-pneumo-1"]],
 	},
 	{
 		id: "adult-hepa-1",
@@ -844,13 +554,13 @@ export const adultSchedule: ImmunizationEntry[] = [
 		abbreviation: "HepA",
 		schedule: "adult",
 		doseNumber: 1,
-		recommendedAge: "19+ years with risk factors or on request",
-		minAge: "19 years",
-		minInterval: "6 months between doses",
+		recommendedAge: "19+ years, not fully vaccinated, with risk factors or requesting protection",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "Single-antigen HepA: 6 months; standard Twinrix: 4 weeks from dose 1 to 2, then 5 months from dose 2 to 3",
 		catchupAge: "N/A",
 		notes:
-			"2-dose series (HepA) or 3-dose series (HepA-HepB combo). Risk groups: travelers, persons with chronic liver disease, MSM, drug users, persons experiencing homelessness.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"Havrix uses two doses 6-12 months apart; Vaqta uses two 6-18 months apart. Standard Twinrix uses doses at 0, 1 and 6 months; its accelerated course adds a month-12 booster after days 0, 7 and 21-30. Vaccination may be requested without a risk factor. Indications include travel, HIV, liver disease, specified exposure risks and pregnancy with infection or severe-outcome risk. Post-exposure prophylaxis needs separate assessment; consult CDC's complete guidance.",
+		contraindications: ["Severe allergy after a previous dose or to a component, including neomycin; Twinrix also includes yeast"],
 	},
 	{
 		id: "adult-hepb-1",
@@ -858,13 +568,13 @@ export const adultSchedule: ImmunizationEntry[] = [
 		abbreviation: "HepB",
 		schedule: "adult",
 		doseNumber: 1,
-		recommendedAge: "19-59 years (universal); 60+ with risk factors",
-		minAge: "19 years",
-		minInterval: "See notes",
+		recommendedAge: "19-59 years (universal); 60+ with risk factors or on request",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
+		minInterval: "Two Heplisav-B doses: at least 4 weeks; standard 3-dose Engerix-B/Recombivax HB: at least 4 weeks from 1 to 2, 8 weeks from 2 to 3 and 16 weeks from 1 to 3; Twinrix and dialysis schedules differ",
 		catchupAge: "N/A",
 		notes:
-			"Universal vaccination recommended for adults 19-59. Adults 60+ with risk factors or on request. 2-dose (Heplisav-B) or 3-dose (Engerix-B, PreHevbrio) series.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"Series depends on product and clinical circumstances: Heplisav-B uses two doses; Engerix-B or Recombivax HB uses three. Twinrix and dialysis schedules differ. PreHevbrio was recalled in November 2024 following the manufacturer's closure and must not be used; consult CDC for completing a previously started series.",
+		contraindications: [...reviewedContraindications["adult-hepb-1"]],
 	},
 	{
 		id: "adult-menacwy-1",
@@ -873,12 +583,12 @@ export const adultSchedule: ImmunizationEntry[] = [
 		schedule: "adult",
 		doseNumber: 1,
 		recommendedAge: "19+ years with risk factors",
-		minAge: "19 years",
+		minAge: "19 years is the lower bound of this adult summary; product minimum ages differ",
 		minInterval: "Varies by indication",
-		catchupAge: "First-year college students through 23 if not previously vaccinated",
+		catchupAge: "First-year residential college students without a dose at age 16 or later",
 		notes:
-			"Indicated for: first-year college students living in residence halls (through age 23), asplenia, complement deficiency, HIV, travel to endemic areas.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"Indications include residential college entry, military recruitment, certain travel or occupational exposures, asplenia, HIV, and complement deficiency or inhibitor use. Primary dose count and ongoing-risk boosters vary; consult CDC's MenACWY-specific schedule. MenB has separate eligibility.",
+		contraindications: [...reviewedContraindications["adult-menacwy-1"]],
 	},
 	{
 		id: "adult-rsv-1",
@@ -886,12 +596,12 @@ export const adultSchedule: ImmunizationEntry[] = [
 		abbreviation: "RSV",
 		schedule: "adult",
 		doseNumber: 1,
-		recommendedAge: "60 years and older (shared clinical decision-making); 32-36 weeks gestation",
-		minAge: "32 weeks gestation (maternal); 60 years",
+		recommendedAge: "75+; ages 50-74 at increased risk; separate maternal indication at 32-36 weeks gestation",
+		minAge: "50 years with increased risk; maternal timing 32 weeks 0 days through 36 weeks 6 days",
 		minInterval: "Single dose",
 		catchupAge: "N/A",
 		notes:
-			"Adults 60+: single dose using shared clinical decision-making. Pregnant persons: single dose of Abrysvo at 32-36 weeks gestation (seasonal, Sep-Jan) to protect newborn.",
+			"Unvaccinated adults aged 75+ and adults aged 50-74 at increased risk receive one RSV dose; additional doses are not recommended. Maternal Abrysvo has separate timing at 32w0d-36w6d, generally September-January in the continental US. Additional doses in subsequent pregnancies are not recommended; consult CDC for infant protection and regional timing.",
 		contraindications: ["Severe allergic reaction to a vaccine component"],
 	},
 ];
@@ -905,27 +615,24 @@ export const catchupSchedule: ImmunizationEntry[] = [
 		doseNumber: 1,
 		recommendedAge: "Birth through 18 years",
 		minAge: "Birth",
-		minInterval: "Dose 1 to 2: 4 weeks; Dose 2 to 3: 8 weeks and 16 weeks after dose 1",
+		minInterval: "Standard 3-dose series: 4 weeks from dose 1 to 2; 8 weeks from 2 to 3 and 16 weeks from 1 to 3; product-specific alternatives in notes",
 		catchupAge: "Through 18 years",
-		notes: "3-dose series. Minimum age for final dose: 24 weeks. Administer missing doses to complete series.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+		notes: "Complete missing doses without restarting. The standard three-dose series has a final-dose minimum age of 24 weeks. Ages 11-15 may instead use two doses of adult-formulation Recombivax HB at least 4 months apart. At age 18, two Heplisav-B doses at least 4 weeks apart or product-specific Twinrix schedules are alternatives; consult the full guidance. These alternatives must not be combined into a single dosing rule.",
+		contraindications: [...reviewedContraindications["catchup-hepb"]],
 	},
 	{
 		id: "catchup-dtap",
-		vaccine: "DTaP",
-		abbreviation: "DTaP",
+		vaccine: "Tetanus, Diphtheria, Pertussis catch-up",
+		abbreviation: "Tdap/Td",
 		schedule: "catchup",
 		doseNumber: 1,
 		recommendedAge: "7 through 18 years",
 		minAge: "7 years",
-		minInterval: "Dose 1 to 2: 4 weeks; Dose 2 to 3: 4 weeks (if dose 1 before 12mo); 6 months (if dose 1 at 12mo+)",
+		minInterval: "Dose 1 to 2: 4 weeks; dose 2 to 3: 4 weeks if first DTaP/DT dose was before age 1, otherwise 6 months as final dose; dose 3 to 4: 6 months when required",
 		catchupAge: "7-18 years",
 		notes:
-			"Children 7-10 who are not fully vaccinated: Tdap as first dose in catch-up series. Adolescents 11-18: 1 dose Tdap then Td or Tdap for remaining doses.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Encephalopathy within 7 days of previous dose",
-		],
+			"For ages 7-18, include Tdap, preferably first, then Td or Tdap as needed. Tdap at ages 7-9 still requires the age 11-12 booster; a dose at age 10 does not.",
+		contraindications: [...reviewedContraindications["catchup-dtap"]],
 	},
 	{
 		id: "catchup-ipv",
@@ -935,11 +642,11 @@ export const catchupSchedule: ImmunizationEntry[] = [
 		doseNumber: 1,
 		recommendedAge: "Through 18 years",
 		minAge: "6 weeks",
-		minInterval: "Dose 1 to 2: 4 weeks; Dose 2 to 3: 4 weeks; Dose 3 to 4: 6 months",
+		minInterval: "Dose 1 to 2: 4 weeks; dose 2 to 3: 4 weeks under age 4, or 6 months as final dose at age 4+; dose 3 to 4: 6 months when required",
 		catchupAge: "Through 18 years",
 		notes:
-			"4-dose series. Final dose on or after 4th birthday and at least 6 months after previous dose. Not routinely recommended for adults in the US.",
-		contraindications: ["Severe allergic reaction to a vaccine component"],
+			"A fourth dose is unnecessary if dose 3 was given at age 4+ and at least 6 months after dose 2. Otherwise a fourth dose is required. In the first 6 months of life, minimum ages and intervals apply only for travel to a polio-endemic region or during an outbreak. Adult vaccination is addressed separately.",
+		contraindications: [...reviewedContraindications["catchup-ipv"]],
 	},
 	{
 		id: "catchup-mmr",
@@ -949,14 +656,10 @@ export const catchupSchedule: ImmunizationEntry[] = [
 		doseNumber: 1,
 		recommendedAge: "Through 18 years",
 		minAge: "12 months",
-		minInterval: "4 weeks between doses",
+		minInterval: "MMR: 4 weeks between doses; MMRV: 3 months between doses",
 		catchupAge: "Through 18 years",
-		notes: "2-dose series, minimum interval 4 weeks between doses.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+		notes: "Unvaccinated children and adolescents need two MMR doses at least 4 weeks apart. MMRV uses a 3-month interval and is limited to ages 12 months through 12 years. A dose before age 12 months for travel does not replace the routine series.",
+		contraindications: [...reviewedContraindications["catchup-mmr"]],
 	},
 	{
 		id: "catchup-var",
@@ -969,12 +672,8 @@ export const catchupSchedule: ImmunizationEntry[] = [
 		minInterval: "Age 12mo-12yr: 3 months; Age 13+: 4 weeks",
 		catchupAge: "Through 18 years",
 		notes:
-			"2-dose series. For children under 13: minimum interval 3 months. For persons 13+: minimum interval 4 weeks.",
-		contraindications: [
-			"Severe allergic reaction to a vaccine component",
-			"Pregnancy",
-			"Known severe immunodeficiency",
-		],
+			"Complete two doses for those without evidence of immunity. Under age 13, plan a 3-month interval; an inadvertently early second dose at least 4 weeks after dose 1 may count. At age 13 or older, use single-antigen vaccine with a routine 4-8 week interval and a 4-week minimum. MMRV is not approved at age 13 or older. Do not restart a delayed series.",
+		contraindications: [...reviewedContraindications["catchup-var"]],
 	},
 	{
 		id: "catchup-hpv",
@@ -984,11 +683,11 @@ export const catchupSchedule: ImmunizationEntry[] = [
 		doseNumber: 1,
 		recommendedAge: "Through 26 years",
 		minAge: "9 years",
-		minInterval: "2-dose: 0, 6-12 months; 3-dose: 0, 1-2, 6 months",
+		minInterval: "2-dose minimum: 5 months; 3-dose minimums: 4 weeks from 1 to 2, 12 weeks from 2 to 3, and 5 months from 1 to 3",
 		catchupAge: "Through 26 years",
 		notes:
-			"Started before age 15: 2-dose series (0, 6-12 months). Started at 15 or older: 3-dose series (0, 1-2 months, 6 months).",
-		contraindications: ["Severe allergic reaction to a vaccine component", "Pregnancy"],
+			"Starting before age 15 generally requires two doses at 0 and 6-12 months. Starting at 15+ or immunocompromise requires three doses at 0, 1-2 and 6 months. Defer vaccination until after pregnancy.",
+		contraindications: ["Severe allergy to a prior HPV dose or component", "Immediate hypersensitivity to yeast"],
 	},
 ];
 
@@ -1019,25 +718,8 @@ export function getAllVaccines(): VaccineInfo[] {
  * Find vaccine info by ID or abbreviation.
  */
 export function findVaccine(idOrAbbrev: string): VaccineInfo | undefined {
-	const lower = idOrAbbrev.toLowerCase();
-	return (
-		vaccines.find((v) => v.id === lower) ||
-		vaccines.find((v) => v.abbreviation.toLowerCase() === lower) ||
-		vaccines.find((v) => v.name.toLowerCase().includes(lower))
-	);
+	const matches = matchingVaccines(vaccines, idOrAbbrev);
+	return matches.length === 1 ? matches[0] : undefined;
 }
 
-/**
- * Filter schedule entries by vaccine name.
- */
-export function filterScheduleByVaccine(
-	entries: ImmunizationEntry[],
-	vaccineSearch: string,
-): ImmunizationEntry[] {
-	const lower = vaccineSearch.toLowerCase();
-	return entries.filter(
-		(e) =>
-			e.vaccine.toLowerCase().includes(lower) ||
-			e.abbreviation.toLowerCase().includes(lower),
-	);
-}
+export { filterScheduleByVaccine } from "./immunization-filter";

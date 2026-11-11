@@ -50,7 +50,6 @@ const index = assertFileExists('src/index.ts', 'index.ts exists');
 const doFile = assertFileExists('src/do.ts', 'do.ts exists');
 const catalog = assertFileExists('src/spec/catalog.ts', 'catalog.ts exists');
 const adapter = assertFileExists('src/lib/api-adapter.ts', 'api-adapter.ts exists');
-const http = assertFileExists('src/lib/http.ts', 'http.ts exists');
 const codeMode = assertFileExists('src/tools/code-mode.ts', 'code-mode.ts exists');
 const queryData = assertFileExists('src/tools/query-data.ts', 'query-data.ts exists');
 const getSchema = assertFileExists('src/tools/get-schema.ts', 'get-schema.ts exists');

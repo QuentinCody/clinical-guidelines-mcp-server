@@ -1,0 +1,187 @@
+import type { VaccineInfo } from "./immunization-types";
+
+export const vaccines: VaccineInfo[] = [
+	{
+		id: "hepb",
+		name: "Hepatitis B",
+		abbreviation: "HepB",
+		diseasePrevented: ["Hepatitis B"],
+		type: "Recombinant",
+		manufacturer: ["Merck", "GSK", "Dynavax"],
+		description:
+			"Protects against hepatitis B virus infection that can cause chronic liver disease and liver cancer.",
+	},
+	{
+		id: "rv",
+		name: "Rotavirus",
+		abbreviation: "RV",
+		diseasePrevented: ["Rotavirus gastroenteritis"],
+		type: "Live attenuated",
+		manufacturer: ["Merck (RotaTeq)", "GSK (Rotarix)"],
+		description:
+			"Helps prevent rotavirus gastroenteritis, including severe diarrhea and dehydration in infants and young children. Vaccination does not prevent every infection.",
+	},
+	{
+		id: "dtap",
+		name: "Diphtheria, Tetanus, Pertussis (DTaP)",
+		abbreviation: "DTaP",
+		diseasePrevented: ["Diphtheria", "Tetanus", "Pertussis"],
+		type: "Inactivated/Toxoid",
+		manufacturer: ["Sanofi Pasteur", "GSK"],
+		description:
+			"Protects against diphtheria, tetanus (lockjaw), and pertussis (whooping cough). Given to children under 7.",
+	},
+	{
+		id: "hib",
+		name: "Haemophilus influenzae type b",
+		abbreviation: "Hib",
+		diseasePrevented: ["Haemophilus influenzae type b disease (meningitis, pneumonia, epiglottitis)"],
+		type: "Conjugate",
+		manufacturer: ["Merck (PedvaxHIB)", "Sanofi Pasteur (ActHIB)", "GSK (Hiberix)"],
+		description:
+			"Protects against Hib bacteria that can cause meningitis, pneumonia, and other invasive infections in children.",
+	},
+	{
+		id: "ipv",
+		name: "Inactivated Poliovirus",
+		abbreviation: "IPV",
+		diseasePrevented: ["Poliomyelitis"],
+		type: "Inactivated",
+		manufacturer: ["Sanofi Pasteur"],
+		description: "Protects against poliovirus, which can cause paralysis and death.",
+	},
+	{
+		id: "pcv",
+		name: "Pneumococcal Conjugate",
+		abbreviation: "PCV15/PCV20/PCV21",
+		diseasePrevented: ["Pneumococcal disease (pneumonia, meningitis, bacteremia)"],
+		type: "Conjugate",
+		manufacturer: ["Pfizer (Prevnar 20)", "Merck (Vaxneuvance, Capvaxive)"],
+		description:
+			"Conjugate vaccines against pneumococcal disease. Routine child schedules use PCV15 or PCV20; adult options also include PCV21. Product choice and further doses depend on age, risk and prior vaccination.",
+	},
+	{
+		id: "mmr",
+		name: "Measles, Mumps, Rubella",
+		abbreviation: "MMR",
+		diseasePrevented: ["Measles", "Mumps", "Rubella"],
+		type: "Live attenuated",
+		manufacturer: ["Merck (M-M-R II)", "GSK (Priorix)"],
+		description:
+			"Protects against measles, mumps, and rubella (German measles). Combination live vaccine.",
+	},
+	{
+		id: "var",
+		name: "Varicella",
+		abbreviation: "VAR",
+		diseasePrevented: ["Varicella (chickenpox)"],
+		type: "Live attenuated",
+		manufacturer: ["Merck"],
+		description: "Prevents chickenpox (varicella). Shingles prevention uses a separate recombinant zoster vaccine.",
+	},
+	{
+		id: "hepa",
+		name: "Hepatitis A",
+		abbreviation: "HepA",
+		diseasePrevented: ["Hepatitis A"],
+		type: "Inactivated",
+		manufacturer: ["Merck", "GSK"],
+		description: "Protects against hepatitis A virus infection that affects the liver.",
+	},
+	{
+		id: "tdap",
+		name: "Tetanus, Diphtheria, Pertussis (Tdap)",
+		abbreviation: "Tdap",
+		diseasePrevented: ["Tetanus", "Diphtheria", "Pertussis"],
+		type: "Inactivated/Toxoid",
+		manufacturer: ["Sanofi Pasteur (Adacel)", "GSK (Boostrix)"],
+		description:
+			"Tetanus, reduced diphtheria toxoid and acellular pertussis vaccine used for adolescent and adult boosters, during each pregnancy, and in catch-up regimens. Age, product and vaccination history determine its use.",
+	},
+	{
+		id: "hpv",
+		name: "Human Papillomavirus",
+		abbreviation: "HPV",
+		diseasePrevented: ["HPV-related cancers (cervical, oropharyngeal, anal, penile)", "Genital warts"],
+		type: "Recombinant",
+		manufacturer: ["Merck (Gardasil 9)"],
+		description:
+			"Protects against human papillomavirus types that cause cancer and genital warts. 9-valent vaccine.",
+	},
+	{
+		id: "menacwy",
+		name: "Meningococcal ACWY",
+		abbreviation: "MenACWY",
+		diseasePrevented: ["Meningococcal disease (serogroups A, C, W, Y)"],
+		type: "Conjugate",
+		manufacturer: ["Sanofi Pasteur (MenQuadfi)", "GSK (Menveo)"],
+		description:
+			"Protects against meningococcal bacteria serogroups A, C, W, and Y that cause meningitis and sepsis.",
+	},
+	{
+		id: "menb",
+		name: "Meningococcal B",
+		abbreviation: "MenB",
+		diseasePrevented: ["Meningococcal disease (serogroup B)"],
+		type: "Recombinant",
+		manufacturer: ["Pfizer (Trumenba)", "GSK (Bexsero)"],
+		description: "Protects against meningococcal bacteria serogroup B.",
+	},
+	{
+		id: "flu",
+		name: "Influenza",
+		abbreviation: "IIV/LAIV/RIV",
+		diseasePrevented: ["Influenza (flu)"],
+		type: "Inactivated, Recombinant, or Live attenuated",
+		manufacturer: ["Multiple"],
+		description:
+			"Annual vaccination against seasonal influenza. Available as inactivated (IIV), recombinant (RIV), or live attenuated (LAIV) formulations.",
+	},
+	{
+		id: "covid",
+		name: "COVID-19",
+		abbreviation: "COVID-19",
+		diseasePrevented: ["COVID-19 (SARS-CoV-2)"],
+		type: "mRNA or Protein subunit",
+		manufacturer: ["Pfizer-BioNTech", "Moderna", "Novavax"],
+		description:
+			"Helps protect against COVID-19, particularly severe illness, hospitalization and death. Seasonal product and dose recommendations depend on age, vaccination history and immune status.",
+	},
+	{
+		id: "rsv",
+		name: "Respiratory Syncytial Virus",
+		abbreviation: "RSV",
+		diseasePrevented: ["RSV lower respiratory tract disease"],
+		type: "Recombinant protein or mRNA",
+		manufacturer: ["GSK (Arexvy)", "Pfizer (Abrysvo)", "Moderna (mResvia)"],
+		description:
+			"Protects against respiratory syncytial virus. Adult eligibility depends on age, risk and prior vaccination. Only Abrysvo is recommended for maternal vaccination, with separate gestational and seasonal criteria; Arexvy and mResvia are not approved during pregnancy.",
+	},
+	{
+		id: "zoster",
+		name: "Zoster (Shingles)",
+		abbreviation: "RZV",
+		diseasePrevented: ["Herpes zoster (shingles)", "Postherpetic neuralgia"],
+		type: "Recombinant adjuvanted",
+		manufacturer: ["GSK (Shingrix)"],
+		description:
+			"Prevents shingles and related complications. CDC recommends two doses for adults 50 years and older, and adults 19 years and older who are or will be immunodeficient or immunosuppressed because of disease or therapy.",
+	},
+	{
+		id: "ppsv",
+		name: "Pneumococcal Polysaccharide",
+		abbreviation: "PPSV23",
+		diseasePrevented: ["Pneumococcal disease"],
+		type: "Polysaccharide",
+		manufacturer: ["Merck (Pneumovax 23)"],
+		description:
+			"Polysaccharide vaccine against 23 pneumococcal serotypes. For eligible adults starting with PCV15, PPSV23 generally follows; it is not needed after PCV20 or PCV21. Prior doses and risk conditions affect the schedule.",
+	},
+	{
+		id: "menabcwy", name: "Meningococcal ABCWY", abbreviation: "MenABCWY",
+		diseasePrevented: ["Meningococcal disease (serogroups A, B, C, W, Y)"],
+		type: "Conjugate and recombinant",
+		manufacturer: ["Pfizer (Penbraya)", "GSK (Penmenvy)"],
+		description: "Combined MenACWY and MenB vaccine, used when both are indicated at the same visit. Subsequent MenB-only doses use Trumenba after Penbraya or Bexsero after Penmenvy. Consult the full CDC guidance for intervals and eligibility.",
+	},
+];

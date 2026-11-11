@@ -4,7 +4,7 @@
  *
  * /uspstf/* — Served from embedded USPSTF static data
  * /cdc/*    — Served from embedded CDC immunization schedule data
- * /ahrq/*   — Proxied to AHRQ CDS Connect API (limited)
+ * /ahrq/*   — Provider-reported shutdown status and successor links
  *
  * This is a multi-API adapter similar to ontology-hub's dual-API pattern.
  */
@@ -12,24 +12,24 @@
 import type { ApiFetchFn } from "@bio-mcp/shared/codemode/catalog";
 import {
 	filterUspstfRecommendations,
-	findUspstfRecommendation,
+	matchingUspstfRecommendations,
 	uspstfRecommendations,
 } from "./data/uspstf-recommendations";
 import {
 	getAllVaccines,
-	findVaccine,
 	filterScheduleByVaccine,
 	childSchedule,
 	adultSchedule,
 	catchupSchedule,
 } from "./data/cdc-immunization-schedule";
-import { ahrqFetch } from "./http";
+import { matchingVaccines, vaccineSchedules } from "./data/vaccine-lookup";
+import { ahrqAvailability, sourceRegistry, withSourceMetadata } from "./data/review-metadata";
 
 /**
  * Build a synthetic JSON Response from data.
  */
 function jsonResponse(data: unknown, status = 200): { status: number; data: unknown } {
-	return { status, data };
+	return { status, data: withSourceMetadata(data) };
 }
 
 /**
@@ -66,7 +66,12 @@ function handleUspstf(
 	// GET /uspstf/recommendations/{topic} — find by topic/id
 	const topicMatch = path.match(/^\/uspstf\/recommendations\/(.+)$/);
 	if (topicMatch) {
-		const result = findUspstfRecommendation(decodeURIComponent(topicMatch[1]));
+		const matches = matchingUspstfRecommendations(decodeURIComponent(topicMatch[1]));
+		if (matches.length > 1) return { status: 409, data: {
+			error: "Ambiguous recommendation keyword; use an exact ID from /uspstf/recommendations",
+			candidates: matches.map(({ id, title, grade, population, ageRange }) => ({ id, title, grade, population, ageRange })),
+		} };
+		const result = matches[0];
 		if (result) {
 			return jsonResponse(result);
 		}
@@ -105,7 +110,7 @@ function handleCdc(
 	if (path === "/cdc/schedule/child") {
 		let entries = childSchedule;
 		if (params?.vaccine) {
-			entries = filterScheduleByVaccine(entries, String(params.vaccine));
+			entries = filterScheduleByVaccine(entries, String(params.vaccine), [...childSchedule, ...adultSchedule, ...catchupSchedule]);
 		}
 		return jsonResponse({
 			schedule: "child",
@@ -119,7 +124,7 @@ function handleCdc(
 	if (path === "/cdc/schedule/adult") {
 		let entries = adultSchedule;
 		if (params?.vaccine) {
-			entries = filterScheduleByVaccine(entries, String(params.vaccine));
+			entries = filterScheduleByVaccine(entries, String(params.vaccine), [...childSchedule, ...adultSchedule, ...catchupSchedule]);
 		}
 		return jsonResponse({
 			schedule: "adult",
@@ -133,33 +138,22 @@ function handleCdc(
 	if (path === "/cdc/schedule/catchup") {
 		let entries = catchupSchedule;
 		if (params?.vaccine) {
-			entries = filterScheduleByVaccine(entries, String(params.vaccine));
+			entries = filterScheduleByVaccine(entries, String(params.vaccine), [...childSchedule, ...adultSchedule, ...catchupSchedule]);
 		}
 		return jsonResponse({
 			schedule: "catchup",
-			description: "Catch-up immunization schedule for persons aged 4 months through 18 years who start late or are more than 1 month behind",
+			description: "Selected catch-up summaries, primarily through age 18; the HPV family summary also includes catch-up through age 26. Use each row's age, product and history qualifications.",
 			total: entries.length,
 			entries,
 		});
 	}
 
-	// GET /cdc/schedule/all — all schedules combined (compact to stay under 30KB staging threshold)
+	// Full rows preserve notes, contraindications and per-record source evidence.
 	if (path === "/cdc/schedule/all") {
-		// Return summary counts + compact entries (without duplicating notes/contraindications)
-		const compact = (entries: typeof childSchedule) =>
-			entries.map(e => ({
-				id: e.id,
-				vaccine: e.vaccine,
-				abbreviation: e.abbreviation,
-				schedule: e.schedule,
-				doseNumber: e.doseNumber,
-				recommendedAge: e.recommendedAge,
-			}));
 		return jsonResponse({
-			child: { total: childSchedule.length, entries: compact(childSchedule) },
-			adult: { total: adultSchedule.length, entries: compact(adultSchedule) },
-			catchup: { total: catchupSchedule.length, entries: compact(catchupSchedule) },
-			_note: "Compact view — use /cdc/schedule/child, /adult, or /catchup for full details with notes and contraindications.",
+			child: { total: childSchedule.length, entries: childSchedule },
+			adult: { total: adultSchedule.length, entries: adultSchedule },
+			catchup: { total: catchupSchedule.length, entries: catchupSchedule },
 		});
 	}
 
@@ -175,24 +169,19 @@ function handleCdc(
 	// GET /cdc/vaccines/{id} — specific vaccine info
 	const vaccineMatch = path.match(/^\/cdc\/vaccines\/(.+)$/);
 	if (vaccineMatch) {
-		const vaccine = findVaccine(decodeURIComponent(vaccineMatch[1]));
+		const matches = matchingVaccines(getAllVaccines(), decodeURIComponent(vaccineMatch[1]));
+		if (matches.length > 1) return { status: 409, data: {
+			error: "Ambiguous vaccine name; use an exact ID or abbreviation from /cdc/vaccines",
+			candidates: matches.map(({ id, name, abbreviation }) => ({ id, name, abbreviation })),
+		} };
+		const vaccine = matches[0];
 		if (vaccine) {
-			// Find schedule entries by both name and abbreviation to handle
-			// cases where schedule uses "HPV" but vaccine.name is "Human Papillomavirus"
-			const searchTerms = [vaccine.name, vaccine.abbreviation].filter(Boolean);
-			const scheduleEntries = [
-				...childSchedule,
-				...adultSchedule,
-				...catchupSchedule,
-			].filter(e =>
-				searchTerms.some(term =>
-					e.vaccine.toLowerCase().includes(term.toLowerCase()) ||
-					e.abbreviation.toLowerCase().includes(term.toLowerCase())
-				)
-			);
+			const scheduleEntries = vaccineSchedules(vaccine, [...childSchedule, ...adultSchedule, ...catchupSchedule]);
 			return jsonResponse({
 				...vaccine,
 				scheduleEntries,
+				schedule_match_scope: "vaccine_family",
+				schedule_coverage: "partial_bundle; matching rows do not establish product eligibility and missing rows do not establish ineligibility",
 			});
 		}
 		return errorResponse(`Vaccine not found: ${vaccineMatch[1]}`);
@@ -202,54 +191,24 @@ function handleCdc(
 }
 
 /**
- * Handle AHRQ routes — proxied to live API.
+ * Preserve legacy routes with an explicit unavailable result, not placeholder HTML.
  */
-async function handleAhrq(
-	path: string,
-	params?: Record<string, unknown>,
-): Promise<{ status: number; data: unknown }> {
-	// Strip the /ahrq prefix to get the actual API path
-	const apiPath = path.replace(/^\/ahrq/, "");
-
-	try {
-		const response = await ahrqFetch(apiPath, params);
-
-		if (!response.ok) {
-			let errorBody: string;
-			try {
-				errorBody = await response.text();
-			} catch {
-				errorBody = response.statusText;
-			}
-			return errorResponse(
-				`AHRQ API error: HTTP ${response.status}: ${errorBody.slice(0, 200)}`,
-				response.status,
-			);
-		}
-
-		const contentType = response.headers.get("content-type") || "";
-		if (!contentType.includes("json")) {
-			const text = await response.text();
-			return { status: response.status, data: text };
-		}
-
-		const data = await response.json();
-		return { status: response.status, data };
-	} catch (err) {
-		const msg = err instanceof Error ? err.message : String(err);
-		return errorResponse(`AHRQ API request failed: ${msg}`, 502);
-	}
+function handleAhrq(): { status: number; data: unknown } {
+	return { status: 503, data: { error: "AHRQ_REPOSITORY_OFFLINE", retryable: false, availability: ahrqAvailability() } };
 }
 
 /**
  * Create an ApiFetchFn that routes based on path prefix:
  * - /uspstf/* -> embedded static USPSTF data
  * - /cdc/*    -> embedded static CDC data
- * - /ahrq/*   -> proxied to AHRQ CDS Connect API
+ * - /ahrq/*   -> explicit unavailable status; /ahrq/status describes why
  */
 export function createGuidelinesApiFetch(): ApiFetchFn {
 	return async (request) => {
 		const { path, params } = request;
+		if (request.method !== "GET") return errorResponse("Only GET is supported", 405);
+		if (path === "/sources") return { status: 200, data: sourceRegistry() };
+		if (path === "/ahrq/status") return { status: 200, data: ahrqAvailability() };
 
 		if (path.startsWith("/uspstf/") || path === "/uspstf") {
 			return handleUspstf(path, params);
@@ -260,7 +219,7 @@ export function createGuidelinesApiFetch(): ApiFetchFn {
 		}
 
 		if (path.startsWith("/ahrq/") || path === "/ahrq") {
-			return handleAhrq(path, params);
+			return handleAhrq();
 		}
 
 		const error = new Error(`Unknown API path prefix: ${path}. Expected /uspstf/*, /cdc/*, or /ahrq/*`) as Error & {
